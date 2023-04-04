@@ -29,8 +29,8 @@ public class Game extends GameApplication {
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(800);
         gameSettings.setHeight(800);
-        gameSettings.setTitle("Onze game");
-        gameSettings.setVersion("1.1");
+        gameSettings.setTitle("Dinsdagochtend 10:55 Two Player Version met pijltjes");
+        gameSettings.setVersion("1.2");
     }
 
     @Override
@@ -98,20 +98,20 @@ public class Game extends GameApplication {
             /* Y naar -5 betekent omlaag */
         });
 
-        FXGL.onKey(KeyCode.L, () -> {
+        FXGL.onKey(KeyCode.RIGHT, () -> {
             player2.translateX(5);
         });
 
-        FXGL.onKey(KeyCode.J, () -> {
+        FXGL.onKey(KeyCode.LEFT, () -> {
             player2.translateX(-5);
         });
 
-        FXGL.onKey(KeyCode.I, () -> {
+        FXGL.onKey(KeyCode.UP, () -> {
             player2.translateY(-5);
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
-        FXGL.onKey(KeyCode.K, () -> {
+        FXGL.onKey(KeyCode.DOWN, () -> {
             player2.translateY(5);
             /* Y naar -5 betekent omlaag */
         });
