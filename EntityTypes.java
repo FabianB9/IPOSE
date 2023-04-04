@@ -1,3 +1,3 @@
 public enum EntityTypes {
-    PLAYER, STAR
+    PLAYER, PLAYER2, STAR
 }

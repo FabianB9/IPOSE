@@ -7,7 +7,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.sun.scenario.Settings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -15,32 +14,31 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.scene.control.Label;
 
-import java.awt.*;
 import java.security.Key;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Game extends GameApplication {
 
-    private Entity player1;
+    private Entity player;
     private Entity player2;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
-        gameSettings.setWidth(800);
-        gameSettings.setHeight(800);
-        gameSettings.setTitle("Dinsdagochtend 10:55 Two Player Version met pijltjes");
-        gameSettings.setVersion("1.2");
+        gameSettings.setFullScreenAllowed(true);
+        gameSettings.setFullScreenFromStart(true);
+        gameSettings.setTitle("Onze game");
+        gameSettings.setVersion("1.0");
     }
 
     @Override
     protected void initGame() {
-        player1 = FXGL.entityBuilder()
+        player = FXGL.entityBuilder()
                 // linksboven op het scherm is x = 0 en y= 0
                 .at(400, 400)
                 /* .view(new Rectangle(30, 30, Color.BLUE)) */
                 /* .view("Groep19.jpg") */
-                .viewWithBBox("Groep19.jpg")
+                .viewWithBBox("pacman.png")
                 // true betekent: component = collidable
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
@@ -49,11 +47,11 @@ public class Game extends GameApplication {
                 .buildAndAttach();
 
         player2 = FXGL.entityBuilder()
-                .at(300, 300)
-                .viewWithBBox("Slide1.jpg")
+                .at(100, 100)
+                .viewWithBBox("legion_flag.png")
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
-                .type(EntityTypes.PLAYER)
+                .type(EntityTypes.PLAYER2)
                 .buildAndAttach();
 
         FXGL.getGameTimer().runAtInterval(() -> {
@@ -68,7 +66,7 @@ public class Game extends GameApplication {
                     /* Dit is de 'ster' in de linkerbovenhoek */
                     .type(EntityTypes.STAR)
                     .buildAndAttach();
-        }, Duration.millis(2000));
+        }, Duration.millis(1000));
         /* Duration is in milliseconden. 2000 milliseconde is dus 2 seconde.
         Dit betekent: elke 2 seconde moet er een ster geplaatst worden op positie 200, 200.
          */
@@ -81,37 +79,37 @@ public class Game extends GameApplication {
         gedrukt wordt. (Dus als we willen dat de user naar rechts gaat
         translateX = speler verplaatsen*/
         FXGL.onKey(KeyCode.D, () -> {
-            player1.translateX(5);
+            player.translateX(5);
         });
 
         FXGL.onKey(KeyCode.A, () -> {
-            player1.translateX(-5);
+            player.translateX(-5);
         });
 
         FXGL.onKey(KeyCode.W, () -> {
-            player1.translateY(-5);
-            /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
+            player.translateY(-5);
+        /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.S, () -> {
-            player1.translateY(5);
-            /* Y naar -5 betekent omlaag */
+            player.translateY(5);
+        /* Y naar -5 betekent omlaag */
         });
 
-        FXGL.onKey(KeyCode.RIGHT, () -> {
+        FXGL.onKey(KeyCode.L, () -> {
             player2.translateX(5);
         });
 
-        FXGL.onKey(KeyCode.LEFT, () -> {
+        FXGL.onKey(KeyCode.J, () -> {
             player2.translateX(-5);
         });
 
-        FXGL.onKey(KeyCode.UP, () -> {
+        FXGL.onKey(KeyCode.I, () -> {
             player2.translateY(-5);
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
-        FXGL.onKey(KeyCode.DOWN, () -> {
+        FXGL.onKey(KeyCode.K, () -> {
             player2.translateY(5);
             /* Y naar -5 betekent omlaag */
         });
@@ -120,10 +118,23 @@ public class Game extends GameApplication {
     @Override
     protected void initPhysics(){
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER, EntityTypes.STAR) {
+            double i = 0.5;
             @Override
             protected void onCollision(Entity player, Entity star) {
                 FXGL.inc("kills", +1);
                 star.removeFromWorld();
+                player.setScaleUniform(i);
+                i += 0.025;
+            }
+        });
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER2, EntityTypes.STAR) {
+            double j = 0.5;
+            @Override
+            protected void onCollision(Entity player2, Entity star) {
+                FXGL.inc("kills", +1);
+                star.removeFromWorld();
+                player2.setScaleUniform(j);
+                j += 0.025;
             }
         });
     }
