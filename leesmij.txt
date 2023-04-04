@@ -1,0 +1,8 @@
+1. Maak een map in 'resources' genaamd 'assets'
+2. Maak vervolgens en map 'textures' in 'assets'
+3. Maak EntityTypes.java aan als enum
+4. Voeg import javafx.scene.control.Label; bovenaan toe in je file
+
+ . pom.xml is bedoeld om een Runnable van te maken (een soort.exe-file op Windows)
+ . Maven --> Plugin --> Assembly
+ . https://www.youtube.com/playlist?list=PL4h6ypqTi3RTiTuAQFKE6xwflnPKyFuPp (syntax klopt soms niet meer ivm oude versie FMXL)
