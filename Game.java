@@ -29,8 +29,8 @@ public class Game extends GameApplication {
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(800);
         gameSettings.setHeight(800);
-        gameSettings.setTitle("Dinsdagochtend 10:55 Two Player Version met pijltjes");
-        gameSettings.setVersion("1.2");
+        gameSettings.setTitle("Dinsdag 12:25");
+        gameSettings.setVersion("1.3");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Game extends GameApplication {
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
                 /* Dit verwijst naar de klasse EntityTypes waar PLAYER en STAR in staan */
-                .type(EntityTypes.PLAYER)
+                .type(EntityTypes.PLAYER1)
                 .buildAndAttach();
 
         player2 = FXGL.entityBuilder()
@@ -53,7 +53,7 @@ public class Game extends GameApplication {
                 .viewWithBBox("Slide1.jpg")
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
-                .type(EntityTypes.PLAYER)
+                .type(EntityTypes.PLAYER2)
                 .buildAndAttach();
 
         FXGL.getGameTimer().runAtInterval(() -> {
@@ -119,34 +119,62 @@ public class Game extends GameApplication {
 
     @Override
     protected void initPhysics(){
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER, EntityTypes.STAR) {
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER1, EntityTypes.STAR) {
             @Override
             protected void onCollision(Entity player, Entity star) {
-                FXGL.inc("kills", +1);
+                FXGL.inc("kills player 1", +1);
+                star.removeFromWorld();
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER2, EntityTypes.STAR) {
+            @Override
+            protected void onCollision(Entity player, Entity star) {
+                FXGL.inc("kills player 2", +1);
                 star.removeFromWorld();
             }
         });
     }
 
+
+
     @Override
     protected void initUI(){
-        Label myText = new Label("Hello there");
+        Label myText = new Label("Score player 1: ");
         myText.setStyle("-fx-text-fill: white");
-        myText.setTranslateX(50);
-        myText.setTranslateY(50);
+        myText.setTranslateX(10);
+        myText.setTranslateY(30);
+        Label myScore = new Label("0");
+        myScore.setStyle("-fx-text-fill: white");
+        myScore.setTranslateX(90);
+        myScore.setTranslateY(30);
+        Label myText2 = new Label("Score player 2: ");
+        myText2.setTranslateX(10);
+        myText2.setTranslateY(50);
+        Label myScore2 = new Label("0");
+        myText2.setStyle("-fx-text-fill: white");
+        myScore2.setStyle("-fx-text-fill: white");
+        myScore2.setTranslateX(90);
+        myScore2.setTranslateY(50);
         // Nu binden we de ene variabele ("kills", een integer) aan een text property
         // vandaar de asString(), want ze kunnen alleen aan elkaar verbonden worden als ze van hetzelfde type zijn
-        myText.textProperty().bind(FXGL.getWorldProperties().intProperty("kills").asString());
+        myScore.textProperty().bind(FXGL.getWorldProperties().intProperty("kills player 1").asString());
+        myScore2.textProperty().bind(FXGL.getWorldProperties().intProperty("kills player 2").asString());
 
         FXGL.getGameScene().setBackgroundColor(Color.MEDIUMPURPLE);
         FXGL.getGameScene().addUINode(myText);
+        FXGL.getGameScene().addUINode(myText2);
+        FXGL.getGameScene().addUINode(myScore);
+        FXGL.getGameScene().addUINode(myScore2);
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars){
         // we willen een variabele (in ons geval: kills) definiëren, die we kunnen verbinden aan de UI
-        vars.put("kills", 0);
+        vars.put("kills player 1", 0);
+        vars.put("kills player 2", 0);
     }
+
 
 
     public static void main (String[]args){
