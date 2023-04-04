@@ -1,0 +1,1 @@
+bart : wachtwoord1, bert : wachtwoord2, kaas : ham
