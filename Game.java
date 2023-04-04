@@ -121,7 +121,7 @@ public class Game extends GameApplication {
             double i = 0.5;
             @Override
             protected void onCollision(Entity player, Entity star) {
-                FXGL.inc("kills", +1);
+                FXGL.inc("kills player 1", +1);
                 star.removeFromWorld();
                 player.setScaleUniform(i);
                 i += 0.025;
@@ -131,7 +131,7 @@ public class Game extends GameApplication {
             double j = 0.5;
             @Override
             protected void onCollision(Entity player2, Entity star) {
-                FXGL.inc("kills", +1);
+                FXGL.inc("kills player 2", +1);
                 star.removeFromWorld();
                 player2.setScaleUniform(j);
                 j += 0.025;
@@ -141,22 +141,38 @@ public class Game extends GameApplication {
 
     @Override
     protected void initUI(){
-        Label myText = new Label("Hello there");
+        Label myText = new Label("Score player 1:");
         myText.setStyle("-fx-text-fill: white");
-        myText.setTranslateX(50);
-        myText.setTranslateY(50);
+        myText.setTranslateX(10);
+        myText.setTranslateY(30);
+        Label myScore = new Label("0");
+        myScore.setStyle("-fx-text-fill: white");
+        myScore.setTranslateX(90);
+        myScore.setTranslateY(30);
+        Label myText2 = new Label("Score player 2:");
+        myText2.setStyle("-fx-text-fill: white");
+        myText2.setTranslateX(10);
+        myText2.setTranslateY(50);
+        Label myScore2 = new Label("0");
+        myScore2.setStyle("-fx-text-fill: white");
+        myScore2.setTranslateX(90);
+        myScore2.setTranslateY(50);
         // Nu binden we de ene variabele ("kills", een integer) aan een text property
         // vandaar de asString(), want ze kunnen alleen aan elkaar verbonden worden als ze van hetzelfde type zijn
-        myText.textProperty().bind(FXGL.getWorldProperties().intProperty("kills").asString());
-
+        myScore.textProperty().bind(FXGL.getWorldProperties().intProperty("kills player 1").asString());
+        myScore2.textProperty().bind(FXGL.getWorldProperties().intProperty("kills player 2").asString());
         FXGL.getGameScene().setBackgroundColor(Color.MEDIUMPURPLE);
         FXGL.getGameScene().addUINode(myText);
+        FXGL.getGameScene().addUINode(myScore);
+        FXGL.getGameScene().addUINode(myText2);
+        FXGL.getGameScene().addUINode(myScore2);
     }
 
     @Override
     protected void initGameVars(Map<String, Object> vars){
         // we willen een variabele (in ons geval: kills) definiëren, die we kunnen verbinden aan de UI
-        vars.put("kills", 0);
+        vars.put("kills player 1", 0);
+        vars.put("kills player 2", 0);
     }
 
 
