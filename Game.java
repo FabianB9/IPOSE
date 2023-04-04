@@ -22,19 +22,20 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Game extends GameApplication {
 
-    private Entity player;
+    private Entity player1;
+    private Entity player2;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(800);
         gameSettings.setHeight(800);
         gameSettings.setTitle("Onze game");
-        gameSettings.setVersion("1.0");
+        gameSettings.setVersion("1.1");
     }
 
     @Override
     protected void initGame() {
-        player = FXGL.entityBuilder()
+        player1 = FXGL.entityBuilder()
                 // linksboven op het scherm is x = 0 en y= 0
                 .at(400, 400)
                 /* .view(new Rectangle(30, 30, Color.BLUE)) */
@@ -44,6 +45,14 @@ public class Game extends GameApplication {
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
                 /* Dit verwijst naar de klasse EntityTypes waar PLAYER en STAR in staan */
+                .type(EntityTypes.PLAYER)
+                .buildAndAttach();
+
+        player2 = FXGL.entityBuilder()
+                .at(300, 300)
+                .viewWithBBox("Slide1.jpg")
+                .with(new CollidableComponent(true))
+                .scale(0.5,0.5)
                 .type(EntityTypes.PLAYER)
                 .buildAndAttach();
 
@@ -72,21 +81,39 @@ public class Game extends GameApplication {
         gedrukt wordt. (Dus als we willen dat de user naar rechts gaat
         translateX = speler verplaatsen*/
         FXGL.onKey(KeyCode.D, () -> {
-            player.translateX(5);
+            player1.translateX(5);
         });
 
         FXGL.onKey(KeyCode.A, () -> {
-            player.translateX(-5);
+            player1.translateX(-5);
         });
 
         FXGL.onKey(KeyCode.W, () -> {
-            player.translateY(-5);
-        /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
+            player1.translateY(-5);
+            /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.S, () -> {
-            player.translateY(5);
-        /* Y naar -5 betekent omlaag */
+            player1.translateY(5);
+            /* Y naar -5 betekent omlaag */
+        });
+
+        FXGL.onKey(KeyCode.L, () -> {
+            player2.translateX(5);
+        });
+
+        FXGL.onKey(KeyCode.J, () -> {
+            player2.translateX(-5);
+        });
+
+        FXGL.onKey(KeyCode.I, () -> {
+            player2.translateY(-5);
+            /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
+        });
+
+        FXGL.onKey(KeyCode.K, () -> {
+            player2.translateY(5);
+            /* Y naar -5 betekent omlaag */
         });
     }
 
