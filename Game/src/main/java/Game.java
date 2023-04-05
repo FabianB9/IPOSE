@@ -19,25 +19,36 @@ import java.awt.*;
 import java.security.Key;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import com.almasb.fxgl.core.util.Platform;
 
 public class Game extends GameApplication {
 
+
+    private static final int AMOUNT_OF_LEVELS = 4;
     private Entity player1;
     private Entity player2;
 
+    private Entity wall;
+
+    private int currentLevel = 1;
+
+
     @Override
     protected void initSettings(GameSettings gameSettings) {
-        gameSettings.setWidth(800);
-        gameSettings.setHeight(800);
-        gameSettings.setTitle("Dinsdag 12:25");
-        gameSettings.setVersion("1.3");
+        // gameSettings.setWidth(800);
+        // gameSettings.setHeight(600);
+        gameSettings.setFullScreenAllowed(true);
+        gameSettings.setFullScreenFromStart(true);
+        gameSettings.setTitle("Dinsdag 20:38");
+        gameSettings.setVersion("1.6");
+
     }
 
     @Override
     protected void initGame() {
         player1 = FXGL.entityBuilder()
                 // linksboven op het scherm is x = 0 en y= 0
-                .at(400, 400)
+                .at(0, 0)
                 /* .view(new Rectangle(30, 30, Color.BLUE)) */
                 /* .view("Groep19.jpg") */
                 .viewWithBBox("Groep19.jpg")
@@ -49,12 +60,22 @@ public class Game extends GameApplication {
                 .buildAndAttach();
 
         player2 = FXGL.entityBuilder()
-                .at(300, 300)
+                // FXGL.getAppWidth()
+                .at(150, 150)
                 .viewWithBBox("Slide1.jpg")
                 .with(new CollidableComponent(true))
-                .scale(0.5,0.5)
+                .scale(0.05,0.05)
                 .type(EntityTypes.PLAYER2)
                 .buildAndAttach();
+
+        wall = FXGL.entityBuilder()
+                .at(-270, 300)
+                .viewWithBBox("brick_wall.png")
+                .with(new CollidableComponent(true))
+                .scale(0.3,0.3)
+                .type(EntityTypes.WALL)
+                .buildAndAttach();
+                // Rectangle
 
         FXGL.getGameTimer().runAtInterval(() -> {
             /* randomPos geneert een willekeurige positie (een beetje van de randen af) voor de ster */
@@ -89,13 +110,22 @@ public class Game extends GameApplication {
         });
 
         FXGL.onKey(KeyCode.W, () -> {
-            player1.translateY(-5);
+            if(player1.getY() == 0){
+            }
+            else {
+                player1.translateY(-5);
+            }
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.S, () -> {
             player1.translateY(5);
             /* Y naar -5 betekent omlaag */
+            System.out.println(FXGL.getAppHeight());
+            System.out.println(FXGL.getAppWidth());
+            System.out.println(player1.getY());
+            System.out.println(player1.getX());
+            // in coördinatensystemen is de positie van een blok de positie linksboven! (Geldt ook voor HTML.)
         });
 
         FXGL.onKey(KeyCode.RIGHT, () -> {
@@ -115,6 +145,12 @@ public class Game extends GameApplication {
             player2.translateY(5);
             /* Y naar -5 betekent omlaag */
         });
+
+        FXGL.onKey(KeyCode.ENTER, () -> {
+            // To-do: ga door naar het volgende level
+            // FXGL.getGam.reset();
+            // FXGL.getGameWorld().
+        });
     }
 
     @Override
@@ -122,7 +158,7 @@ public class Game extends GameApplication {
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER1, EntityTypes.STAR) {
             @Override
             protected void onCollision(Entity player, Entity star) {
-                FXGL.inc("kills player 1", +1);
+                FXGL.inc("amount of kills player 1", +1);
                 star.removeFromWorld();
             }
         });
@@ -130,7 +166,7 @@ public class Game extends GameApplication {
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER2, EntityTypes.STAR) {
             @Override
             protected void onCollision(Entity player, Entity star) {
-                FXGL.inc("kills player 2", +1);
+                FXGL.inc("amount of kills player 2", +1);
                 star.removeFromWorld();
             }
         });
@@ -158,8 +194,8 @@ public class Game extends GameApplication {
         myScore2.setTranslateY(50);
         // Nu binden we de ene variabele ("kills", een integer) aan een text property
         // vandaar de asString(), want ze kunnen alleen aan elkaar verbonden worden als ze van hetzelfde type zijn
-        myScore.textProperty().bind(FXGL.getWorldProperties().intProperty("kills player 1").asString());
-        myScore2.textProperty().bind(FXGL.getWorldProperties().intProperty("kills player 2").asString());
+        myScore.textProperty().bind(FXGL.getWorldProperties().intProperty("amount of kills player 1").asString());
+        myScore2.textProperty().bind(FXGL.getWorldProperties().intProperty("amount of kills player 2").asString());
 
         FXGL.getGameScene().setBackgroundColor(Color.MEDIUMPURPLE);
         FXGL.getGameScene().addUINode(myText);
@@ -171,8 +207,8 @@ public class Game extends GameApplication {
     @Override
     protected void initGameVars(Map<String, Object> vars){
         // we willen een variabele (in ons geval: kills) definiëren, die we kunnen verbinden aan de UI
-        vars.put("kills player 1", 0);
-        vars.put("kills player 2", 0);
+        vars.put("amount of kills player 1", 0);
+        vars.put("amount of kills player 2", 0);
     }
 
 
