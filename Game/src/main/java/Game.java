@@ -4,6 +4,7 @@
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.dsl.components.KeepOnScreenComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
@@ -64,6 +65,7 @@ public class Game extends GameApplication {
                 .viewWithBBox("shieldguy.png")
                 // true betekent: component = collidable
                 .with(new CollidableComponent(true))
+                .with(new KeepOnScreenComponent())
                 .scale(0.5,0.5)
                 /* Dit verwijst naar de klasse EntityTypes waar PLAYER en STAR in staan */
                 .type(EntityTypes.SHIELDGUY)
@@ -76,6 +78,7 @@ public class Game extends GameApplication {
                 .at(startXSwordGuy, startYSwordGuy)
                 .viewWithBBox("swordguy.png")
                 .with(new CollidableComponent(true))
+                .with(new KeepOnScreenComponent())
                 .scale(0.5,0.5)
                 .type(EntityTypes.SWORDGUY)
                 .buildAndAttach();
@@ -133,36 +136,20 @@ public class Game extends GameApplication {
         gedrukt wordt. (Dus als we willen dat de user naar rechts gaat
         translateX = speler verplaatsen*/
         FXGL.onKey(KeyCode.D, () -> {
-            if(shieldGuy.getX() > 720){
-            }
-            else {
                 shieldGuy.translateX(5);
-            }
         });
 
         FXGL.onKey(KeyCode.A, () -> {
-            if(shieldGuy.getX() <= -25){
-            }
-            else {
                 shieldGuy.translateX(-5);
-            }
         });
 
         FXGL.onKey(KeyCode.W, () -> {
-            if(shieldGuy.getY() == -25){
-            }
-            else {
                 shieldGuy.translateY(-5);
-            }
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.S, () -> {
-            if(shieldGuy.getY() > 515){
-            }
-            else {
                 shieldGuy.translateY(5);
-            }
         });
         /* Y naar -5 betekent omlaag */
 
@@ -173,37 +160,20 @@ public class Game extends GameApplication {
         // in coördinatensystemen is de positie van een blok de positie linksboven! (Geldt ook voor HTML.)
 
         FXGL.onKey(KeyCode.RIGHT, () -> {
-            if(swordGuy.getX() > 705){
-            }
-            else {
                 swordGuy.translateX(5);
-            }
         });
 
         FXGL.onKey(KeyCode.LEFT, () -> {
-            if(swordGuy.getX() <= -25){
-                swordGuy.setX(-25);
-            }
-            else {
                 swordGuy.translateX(-5);
-            }
         });
 
         FXGL.onKey(KeyCode.UP, () -> {
-            if(swordGuy.getY() == -25){
-            }
-            else {
                 swordGuy.translateY(-5);
-            }
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.DOWN, () -> {
-            if(swordGuy.getY() > 511){
-            }
-            else {
                 swordGuy.translateY(5);
-            }
             /* Y naar -5 betekent omlaag */
         });
 
