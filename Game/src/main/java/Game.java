@@ -7,7 +7,9 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsWorld;
 import com.sun.scenario.Settings;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -21,6 +23,8 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import com.almasb.fxgl.core.util.Platform;
 
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getPhysicsWorld;
+
 public class Game extends GameApplication {
 
 
@@ -31,6 +35,8 @@ public class Game extends GameApplication {
     private Entity brickWall;
 
     private Entity brickWall2;
+
+    private Entity verticalBrickWall;
 
     private int currentLevel = 1;
 
@@ -48,9 +54,11 @@ public class Game extends GameApplication {
 
     @Override
     protected void initGame() {
+        double startXShieldGuy = 0;
+        double startYShieldGuy = 450;
         shieldGuy = FXGL.entityBuilder()
                 // linksboven op het scherm is x = 0 en y= 0
-                .at(0, 450)
+                .at(startXShieldGuy, startYShieldGuy)
                 /* .view(new Rectangle(30, 30, Color.BLUE)) */
                 /* .view("Groep19.jpg") */
                 .viewWithBBox("shieldguy.png")
@@ -61,9 +69,11 @@ public class Game extends GameApplication {
                 .type(EntityTypes.SHIELDGUY)
                 .buildAndAttach();
 
+        double startXSwordGuy = -13;
+        double startYSwordGuy = 500;
         swordGuy = FXGL.entityBuilder()
                 // FXGL.getAppWidth()
-                .at(-13, 500)
+                .at(startXSwordGuy, startYSwordGuy)
                 .viewWithBBox("swordguy.png")
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
@@ -80,12 +90,22 @@ public class Game extends GameApplication {
                 // Rectangle
 
         brickWall2 = FXGL.entityBuilder()
-                .at(-270, 300)
-                .viewWithBBox("brick_wall2.png")
+                .at(-40, 300)
+                .viewWithBBox("brick_wall.png")
                 .with(new CollidableComponent(true))
                 .scale(0.3,0.3)
                 .type(EntityTypes.BRICKWALL2)
                 .buildAndAttach();
+
+        verticalBrickWall = FXGL.entityBuilder()
+                .at(475, 100)
+                .viewWithBBox("vertical_brick_wall.png")
+                .with(new CollidableComponent(true))
+                .scale(0.3,0.3)
+                .type(EntityTypes.VERTICALBRICKWALL)
+                .buildAndAttach();
+
+
         // Rectangle
 
         FXGL.getGameTimer().runAtInterval(() -> {
@@ -121,7 +141,7 @@ public class Game extends GameApplication {
         });
 
         FXGL.onKey(KeyCode.A, () -> {
-            if(shieldGuy.getX() == -25){
+            if(shieldGuy.getX() <= -25){
             }
             else {
                 shieldGuy.translateX(-5);
@@ -161,7 +181,8 @@ public class Game extends GameApplication {
         });
 
         FXGL.onKey(KeyCode.LEFT, () -> {
-            if(swordGuy.getX() == 200){
+            if(swordGuy.getX() <= -25){
+                swordGuy.setX(-25);
             }
             else {
                 swordGuy.translateX(-5);
@@ -186,7 +207,8 @@ public class Game extends GameApplication {
             /* Y naar -5 betekent omlaag */
         });
 
-        FXGL.onKey(KeyCode.ENTER, () -> {
+        FXGL.onKey(KeyCode.SPACE, () -> {
+            shieldGuy.translateY(-10);
             // To-do: ga door naar het volgende level
             // FXGL.getGam.reset();
             // FXGL.getGameWorld().
@@ -194,7 +216,9 @@ public class Game extends GameApplication {
     }
 
     @Override
-    protected void initPhysics(){
+    protected void initPhysics() {
+        getPhysicsWorld().setGravity(0, 0); // set the gravity to 1000 pixels per second squared downwards
+
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SHIELDGUY, EntityTypes.STAR) {
             @Override
             protected void onCollision(Entity player, Entity star) {
@@ -208,6 +232,56 @@ public class Game extends GameApplication {
             protected void onCollision(Entity player, Entity star) {
                 FXGL.inc("amount of kills player 2", +1);
                 star.removeFromWorld();
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SHIELDGUY, EntityTypes.BRICKWALL) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(0, 450);
+            }
+        });
+
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SWORDGUY, EntityTypes.BRICKWALL) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(-13, 500);
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SHIELDGUY, EntityTypes.BRICKWALL) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(-13, 500);
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SWORDGUY, EntityTypes.BRICKWALL2) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(-13, 500);
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SWORDGUY, EntityTypes.BRICKWALL2) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(-13, 500);
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SHIELDGUY, EntityTypes.VERTICALBRICKWALL) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(-13, 500);
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SWORDGUY, EntityTypes.VERTICALBRICKWALL) {
+            @Override
+            protected void onCollision(Entity player, Entity brickwall) {
+                player.setPosition(-13, 500);
             }
         });
     }
