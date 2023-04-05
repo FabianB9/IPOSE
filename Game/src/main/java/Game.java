@@ -25,10 +25,12 @@ public class Game extends GameApplication {
 
 
     private static final int AMOUNT_OF_LEVELS = 4;
-    private Entity player1;
-    private Entity player2;
+    private Entity shieldGuy;
+    private Entity swordGuy;
 
-    private Entity wall;
+    private Entity brickWall;
+
+    private Entity brickWall2;
 
     private int currentLevel = 1;
 
@@ -39,43 +41,52 @@ public class Game extends GameApplication {
         // gameSettings.setHeight(600);
         gameSettings.setFullScreenAllowed(true);
         gameSettings.setFullScreenFromStart(true);
-        gameSettings.setTitle("Dinsdag 20:38");
-        gameSettings.setVersion("1.6");
+        gameSettings.setTitle("Woensdag 10:30");
+        gameSettings.setVersion("1.8");
 
     }
 
     @Override
     protected void initGame() {
-        player1 = FXGL.entityBuilder()
+        shieldGuy = FXGL.entityBuilder()
                 // linksboven op het scherm is x = 0 en y= 0
-                .at(0, 0)
+                .at(0, 450)
                 /* .view(new Rectangle(30, 30, Color.BLUE)) */
                 /* .view("Groep19.jpg") */
-                .viewWithBBox("Groep19.jpg")
+                .viewWithBBox("shieldguy.png")
                 // true betekent: component = collidable
                 .with(new CollidableComponent(true))
                 .scale(0.5,0.5)
                 /* Dit verwijst naar de klasse EntityTypes waar PLAYER en STAR in staan */
-                .type(EntityTypes.PLAYER1)
+                .type(EntityTypes.SHIELDGUY)
                 .buildAndAttach();
 
-        player2 = FXGL.entityBuilder()
+        swordGuy = FXGL.entityBuilder()
                 // FXGL.getAppWidth()
-                .at(150, 150)
-                .viewWithBBox("Slide1.jpg")
+                .at(-13, 500)
+                .viewWithBBox("swordguy.png")
                 .with(new CollidableComponent(true))
-                .scale(0.05,0.05)
-                .type(EntityTypes.PLAYER2)
+                .scale(0.5,0.5)
+                .type(EntityTypes.SWORDGUY)
                 .buildAndAttach();
 
-        wall = FXGL.entityBuilder()
+        brickWall = FXGL.entityBuilder()
                 .at(-270, 300)
                 .viewWithBBox("brick_wall.png")
                 .with(new CollidableComponent(true))
                 .scale(0.3,0.3)
-                .type(EntityTypes.WALL)
+                .type(EntityTypes.BRICKWALL)
                 .buildAndAttach();
                 // Rectangle
+
+        brickWall2 = FXGL.entityBuilder()
+                .at(-270, 300)
+                .viewWithBBox("brick_wall2.png")
+                .with(new CollidableComponent(true))
+                .scale(0.3,0.3)
+                .type(EntityTypes.BRICKWALL2)
+                .buildAndAttach();
+        // Rectangle
 
         FXGL.getGameTimer().runAtInterval(() -> {
             /* randomPos geneert een willekeurige positie (een beetje van de randen af) voor de ster */
@@ -102,47 +113,76 @@ public class Game extends GameApplication {
         gedrukt wordt. (Dus als we willen dat de user naar rechts gaat
         translateX = speler verplaatsen*/
         FXGL.onKey(KeyCode.D, () -> {
-            player1.translateX(5);
+            if(shieldGuy.getX() > 720){
+            }
+            else {
+                shieldGuy.translateX(5);
+            }
         });
 
         FXGL.onKey(KeyCode.A, () -> {
-            player1.translateX(-5);
+            if(shieldGuy.getX() == -25){
+            }
+            else {
+                shieldGuy.translateX(-5);
+            }
         });
 
         FXGL.onKey(KeyCode.W, () -> {
-            if(player1.getY() == 0){
+            if(shieldGuy.getY() == -25){
             }
             else {
-                player1.translateY(-5);
+                shieldGuy.translateY(-5);
             }
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.S, () -> {
-            player1.translateY(5);
-            /* Y naar -5 betekent omlaag */
-            System.out.println(FXGL.getAppHeight());
-            System.out.println(FXGL.getAppWidth());
-            System.out.println(player1.getY());
-            System.out.println(player1.getX());
-            // in coördinatensystemen is de positie van een blok de positie linksboven! (Geldt ook voor HTML.)
+            if(shieldGuy.getY() > 515){
+            }
+            else {
+                shieldGuy.translateY(5);
+            }
         });
+        /* Y naar -5 betekent omlaag */
+
+            /* System.out.println(FXGL.getAppHeight());
+            System.out.println(FXGL.getAppWidth());
+            System.out.println(shieldGuy.getY());
+            System.out.println(shieldGuy.getX()); */
+        // in coördinatensystemen is de positie van een blok de positie linksboven! (Geldt ook voor HTML.)
 
         FXGL.onKey(KeyCode.RIGHT, () -> {
-            player2.translateX(5);
+            if(swordGuy.getX() > 705){
+            }
+            else {
+                swordGuy.translateX(5);
+            }
         });
 
         FXGL.onKey(KeyCode.LEFT, () -> {
-            player2.translateX(-5);
+            if(swordGuy.getX() == 200){
+            }
+            else {
+                swordGuy.translateX(-5);
+            }
         });
 
         FXGL.onKey(KeyCode.UP, () -> {
-            player2.translateY(-5);
+            if(swordGuy.getY() == -25){
+            }
+            else {
+                swordGuy.translateY(-5);
+            }
             /* Y naar -5 betekent omhoog. Onthoud 0,0 is linksboven dus omhoog is negatief! */
         });
 
         FXGL.onKey(KeyCode.DOWN, () -> {
-            player2.translateY(5);
+            if(swordGuy.getY() > 511){
+            }
+            else {
+                swordGuy.translateY(5);
+            }
             /* Y naar -5 betekent omlaag */
         });
 
@@ -155,7 +195,7 @@ public class Game extends GameApplication {
 
     @Override
     protected void initPhysics(){
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER1, EntityTypes.STAR) {
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SHIELDGUY, EntityTypes.STAR) {
             @Override
             protected void onCollision(Entity player, Entity star) {
                 FXGL.inc("amount of kills player 1", +1);
@@ -163,7 +203,7 @@ public class Game extends GameApplication {
             }
         });
 
-        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.PLAYER2, EntityTypes.STAR) {
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityTypes.SWORDGUY, EntityTypes.STAR) {
             @Override
             protected void onCollision(Entity player, Entity star) {
                 FXGL.inc("amount of kills player 2", +1);
